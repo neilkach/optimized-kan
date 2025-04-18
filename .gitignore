@@ -13,3 +13,5 @@ figures
 molecule
 applications
 experiments
+.venv
+wandb/

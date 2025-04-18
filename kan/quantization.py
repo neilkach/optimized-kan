@@ -16,4 +16,4 @@ class QuantizedKAN(torch.nn.Module):
 def quantize_model(model, dtype=torch.qint8):
     quantized_model = QuantizedKAN(model)
     quantized_model.qconfig = torch.quantization.get_default_qconfig('fbgemm')
-    return torch.quantization.prepare(quantized_model, inplace=True)
+    torch.quantization.prepare(quantized_model, inplace=True)
