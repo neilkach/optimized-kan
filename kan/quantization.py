@@ -17,3 +17,4 @@ def quantize_model(model, dtype=torch.qint8):
     quantized_model = QuantizedKAN(model)
     quantized_model.qconfig = torch.quantization.get_default_qconfig('fbgemm')
     torch.quantization.prepare(quantized_model, inplace=True)
+    return None
