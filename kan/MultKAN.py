@@ -1407,9 +1407,9 @@ class MultKAN(nn.Module):
         '''
         return self.parameters()
         
-            
+    
     def fit(self, dataset, opt="LBFGS", steps=100, log=1, lamb=0., lamb_l1=1., lamb_entropy=2., lamb_coef=0., lamb_coefdiff=0., update_grid=True, grid_update_num=10, loss_fn=None, lr=1.,start_grid_update_step=-1, stop_grid_update_step=50, batch=-1,
-              metrics=None, save_fig=False, in_vars=None, out_vars=None, beta=3, save_fig_freq=1, img_folder='./video', singularity_avoiding=False, y_th=1000., reg_metric='edge_forward_spline_n', display_metrics=None):
+              metrics=None, save_fig=False, in_vars=None, out_vars=None, beta=3, save_fig_freq=1, img_folder='./video', singularity_avoiding=False, y_th=1000., reg_metric='edge_forward_spline_n', display_metrics=None, profile=False):
         '''
         training
 
@@ -1493,6 +1493,24 @@ class MultKAN(nn.Module):
 
         grid_update_freq = int(stop_grid_update_step / grid_update_num)
 
+        if profile:
+            prof = torch.profiler.profile(
+                activities=[
+                    torch.profiler.ProfilerActivity.CPU,
+                    torch.profiler.ProfilerActivity.CUDA,
+                ],
+                schedule=torch.profiler.schedule(
+                    wait=1,
+                    warmup=1,
+                    active=3,
+                    repeat=1),
+                on_trace_ready=torch.profiler.tensorboard_trace_handler('./profile_logs'),
+                record_shapes=True,
+                with_stack=True,
+                profile_memory=True
+            )
+            prof.start()
+
         if opt == "Adam":
             optimizer = torch.optim.Adam(self.get_params(), lr=lr)
         elif opt == "LBFGS":
@@ -1570,6 +1588,9 @@ class MultKAN(nn.Module):
                 loss.backward()
                 optimizer.step()
 
+            if profile:
+                prof.step()
+
             test_loss = loss_fn_eval(self.forward(dataset['test_input'][test_id]), dataset['test_label'][test_id])
             
             
@@ -1603,11 +1624,16 @@ class MultKAN(nn.Module):
                 plt.close()
                 self.save_act = save_act
 
+        
+        if profile:
+            prof.stop()
+            print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=10))
+
         self.log_history('fit')
         # revert back to original state
         self.symbolic_enabled = old_symbolic_enabled
         return results
-
+    
     def prune_node(self, threshold=1e-2, mode="auto", active_neurons_id=None, log_history=True):
         '''
         pruning nodes
