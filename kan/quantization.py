@@ -1,8 +1,9 @@
 import torch.quantization
+from kan.MultKAN import MultKAN
 
-class QuantizedKAN(torch.nn.Module):
+class QuantizedKAN(MultKAN):
     def __init__(self, kan_model):
-        super().__init__()
+        super().__init__(kan_model.width)
         self.quant = torch.quantization.QuantStub()
         self.dequant = torch.quantization.DeQuantStub()
         self.kan = kan_model
