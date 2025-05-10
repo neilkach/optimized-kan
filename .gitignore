@@ -13,3 +13,7 @@ figures
 molecule
 applications
 experiments
+model/*
+.venv
+wandb/
+profile_logs/*
