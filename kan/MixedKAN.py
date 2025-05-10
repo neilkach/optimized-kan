@@ -5,11 +5,13 @@ from .LBFGS import *
 import os
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import wandb
+import time
 
 class MixedPrecisionKAN(MultKAN):
 
     def fit(self, dataset, opt="LBFGS", steps=100, log=1, lamb=0., lamb_l1=1., lamb_entropy=2., lamb_coef=0., lamb_coefdiff=0., update_grid=True, grid_update_num=10, loss_fn=None, lr=1., start_grid_update_step=-1, stop_grid_update_step=50, batch=-1,
-              metrics=None, save_fig=False, in_vars=None, out_vars=None, beta=3, save_fig_freq=1, img_folder='./video', singularity_avoiding=False, y_th=1000., reg_metric='edge_forward_spline_n', display_metrics=None, profile=False):
+              metrics=None, save_fig=False, in_vars=None, out_vars=None, beta=3, save_fig_freq=1, img_folder='./video', singularity_avoiding=False, y_th=1000., reg_metric='edge_forward_spline_n', display_metrics=None, profile=False, model="mpkan"):
         '''
         training with mixed precision support
         '''
@@ -110,9 +112,10 @@ class MixedPrecisionKAN(MultKAN):
             if not os.path.exists(img_folder):
                 os.makedirs(img_folder)
 
-        for _ in pbar:
+        for step in pbar:
+            start_time = time.perf_counter()
             
-            if _ == steps-1 and old_save_act:
+            if step == steps-1 and old_save_act:
                 self.save_act = True
                 
             if save_fig and _ % save_fig_freq == 0:
@@ -122,7 +125,7 @@ class MixedPrecisionKAN(MultKAN):
             train_id = np.random.choice(dataset['train_input'].shape[0], batch_size, replace=False)
             test_id = np.random.choice(dataset['test_input'].shape[0], batch_size_test, replace=False)
 
-            if _ % grid_update_freq == 0 and _ < stop_grid_update_step and update_grid and _ >= start_grid_update_step:
+            if step % grid_update_freq == 0 and step < stop_grid_update_step and update_grid and step >= start_grid_update_step:
                 self.update_grid(dataset['train_input'][train_id])
 
             if opt == "LBFGS":
@@ -161,9 +164,21 @@ class MixedPrecisionKAN(MultKAN):
             results['test_loss'].append(torch.sqrt(test_loss).cpu().detach().numpy())
             results['reg'].append(reg_.cpu().detach().numpy())
 
-            if _ % log == 0:
-                if display_metrics == None:
-                    pbar.set_description("| train_loss: %.2e | test_loss: %.2e | reg: %.2e | " % (torch.sqrt(train_loss).cpu().detach().numpy(), torch.sqrt(test_loss).cpu().detach().numpy(), reg_.cpu().detach().numpy()))
+            exec_time = time.perf_counter() - start_time
+            wandb.log({
+                "step": step,
+                model+"_train_loss": float(torch.sqrt(train_loss)),
+                model+"_val_loss": float(torch.sqrt(test_loss)),
+                model+"_reg": float(reg_),
+                model+"_exec_time": exec_time
+            })
+
+            if step % log == 0:
+                if display_metrics is None:
+                    pbar.set_description("| train_loss: %.2e | test_loss: %.2e | reg: %.2e |" % (
+                        torch.sqrt(train_loss).cpu().detach().numpy(),
+                        torch.sqrt(test_loss).cpu().detach().numpy(),
+                        reg_.cpu().detach().numpy()))                
                 else:
                     string = ''
                     data = ()
@@ -176,9 +191,9 @@ class MixedPrecisionKAN(MultKAN):
                         data += (results[metric][-1],)
                     pbar.set_description(string % data)
                     
-            if save_fig and _ % save_fig_freq == 0:
-                self.plot(folder=img_folder, in_vars=in_vars, out_vars=out_vars, title="Step {}".format(_), beta=beta)
-                plt.savefig(img_folder + '/' + str(_) + '.jpg', bbox_inches='tight', dpi=200)
+            if save_fig and step % save_fig_freq == 0:
+                self.plot(folder=img_folder, in_vars=in_vars, out_vars=out_vars, title="Step {}".format(step), beta=beta)
+                plt.savefig(img_folder + '/' + str(step) + '.jpg', bbox_inches='tight', dpi=200)
                 plt.close()
                 self.save_act = save_act
 
