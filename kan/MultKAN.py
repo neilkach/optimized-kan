@@ -2699,7 +2699,7 @@ class MultKAN(nn.Module):
         plot_tree(self, x, in_var=in_var, style=style, sym_th=sym_th, sep_th=sep_th, skip_sep_test=skip_sep_test, verbose=verbose)
         
         
-    def speed(self, compile=False):
+    def speed(self, compile=False, **compile_kwargs):
         '''
         turn on KAN's speed mode
         '''
@@ -2707,7 +2707,7 @@ class MultKAN(nn.Module):
         self.save_act=False
         self.auto_save=False
         if compile == True:
-            return torch.compile(self)
+            return torch.compile(self, **compile_kwargs)
         else:
             return self
         
