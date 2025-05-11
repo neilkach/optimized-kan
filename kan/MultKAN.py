@@ -22,6 +22,7 @@ from .utils import SYMBOLIC_LIB
 from .hypothesis import plot_tree
 import wandb
 import time
+from torch.autograd import DeviceType
 
 class MultKAN(nn.Module):
     '''
@@ -1506,7 +1507,7 @@ class MultKAN(nn.Module):
                     warmup=1,
                     active=3,
                     repeat=1),
-                on_trace_ready=torch.profiler.tensorboard_trace_handler('./profile_logs'),
+                # on_trace_ready=torch.profiler.tensorboard_trace_handler('./profile_logs'),
                 record_shapes=True,
                 with_stack=True,
                 profile_memory=True
@@ -1603,10 +1604,10 @@ class MultKAN(nn.Module):
             exec_time = time.perf_counter() - start_time
             wandb.log({
                 "step": step,
-                model+"_train_loss": float(torch.sqrt(train_loss)),
-                model+"_val_loss": float(torch.sqrt(test_loss)),
-                model+"_reg": float(reg_),
-                model+"_exec_time": exec_time
+                "train_loss": float(torch.sqrt(train_loss)),
+                "val_loss": float(torch.sqrt(test_loss)),
+                "reg": float(reg_),
+                "exec_time": exec_time
             })
 
             if step % log == 0:
@@ -1634,6 +1635,44 @@ class MultKAN(nn.Module):
         if profile:
             prof.stop()
             print(prof.key_averages().table(sort_by="cuda_time_total", row_limit=10))
+
+            sum_self_cpu_time_total = 0
+            sum_cpu_time_total = 0
+            sum_self_device_time_total = 0
+            sum_device_time_total = 0
+            for evt in prof.key_averages():
+                sum_self_cpu_time_total += evt.self_cpu_time_total
+                sum_cpu_time_total += evt.cpu_time_total
+                if evt.device_type == DeviceType.CPU and evt.is_legacy:
+                    # in legacy profiler, kernel info is stored in cpu events
+                    sum_self_device_time_total += evt.self_device_time_total
+                    sum_device_time_total += evt.device_time_total
+                elif (
+                    evt.device_type
+                    in [
+                        DeviceType.CUDA,
+                        DeviceType.PrivateUse1,
+                        DeviceType.MTIA,
+                    ]
+                    and not evt.is_user_annotation
+                ):
+                    # in kineto profiler, there're events with the correct device type (e.g. CUDA)
+                    sum_self_device_time_total += evt.self_device_time_total
+                    sum_device_time_total += evt.device_time_total
+
+            # Log to wandb
+            wandb.log({
+                "cpu_time_total (ms)": sum_cpu_time_total / 1000,
+                "cuda_time_total (ms)": sum_device_time_total / 1000,
+                "self_cpu_time_total (ms)": sum_self_cpu_time_total / 1000,
+                "self_cuda_time_total (ms)": sum_self_device_time_total / 1000
+            })
+
+            trace_path = os.path.join(".", "trace.json")
+            prof.export_chrome_trace(trace_path)
+            print('Saved to', trace_path)
+            wandb.save(trace_path)
+            print('Saved', trace_path, 'to W&B')
 
         self.log_history('fit')
         # revert back to original state
