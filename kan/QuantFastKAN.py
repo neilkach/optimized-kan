@@ -31,7 +31,7 @@ class QuantRadialBasisFunction(nn.Module):
         grid_min: float = -2.,
         grid_max: float = 2.,
         num_grids: int = 8,
-        denominator: float = None,  # larger denominators lead to smoother basis
+        denominator: float = None,
     ):
         super().__init__()
         self.grid_min = grid_min
@@ -41,14 +41,16 @@ class QuantRadialBasisFunction(nn.Module):
         self.grid = torch.nn.Parameter(grid, requires_grad=False)
         self.denominator = denominator or (grid_max - grid_min) / (num_grids - 1)
 
-        # self.qconfig = None
         self.quant = torch.ao.quantization.QuantStub()
         self.dequant = torch.ao.quantization.DeQuantStub()
 
     def forward(self, x):
         x = self.quant(x)
+
+        # Equivalent Representations
         # x = torch.exp(-((x[..., None] - self.grid) / self.denominator) ** 2)
-        x = x.unsqueeze(-1).sub(self.grid).div(self.denominator).pow(2).neg().exp()
+        x = x.unsqueeze(-1).sub(self.grid).div(self.denominator).pow(2).neg().exp() 
+
         return self.dequant(x)
 
 class QuantFastKANLayer(nn.Module):
