@@ -64,7 +64,7 @@ class QuantKAN(MultKAN):
 
             x = x_numerical + x_symbolic
             #drawing comparison to first layer of an MLP, scaling activations
-            #x = quantize(x)
+            x = quantize(x)
             
             if self.save_act:
                 # save subnode_scale
@@ -73,7 +73,7 @@ class QuantKAN(MultKAN):
             # subnode affine transform
             x = self.subnode_scale[l][None,:] * x + self.subnode_bias[l][None,:]
             #quantize again after transformations, like scaling activations?
-            #x = quantize(x)
+            x = quantize(x)
             
             if self.save_act:
                 postacts = postacts_numerical + postacts_symbolic
@@ -123,13 +123,13 @@ class QuantKAN(MultKAN):
                 x = torch.cat([x[:,:dim_sum], x_mult], dim=1)
             
             #again simulating quantizing post layer activations
-            #x = quantize(x)
+            x = quantize(x)
             
             # x = x + self.biases[l].weight
             # node affine transform
             x = self.node_scale[l][None,:] * x + self.node_bias[l][None,:]
             #final quantization of activations
-            #x = quantize(x)
+            x = quantize(x)
             
             self.acts.append(x.detach())
             
