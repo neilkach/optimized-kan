@@ -55,7 +55,7 @@ SYMBOLIC_LIB = {'x': (lambda x: x, lambda x: x, 1, lambda x, y_th: ((), x)),
                  '0': (lambda x: x*0, lambda x: x*0, 0, lambda x, y_th: ((), x*0)),
                  'gaussian': (lambda x: torch.exp(-x**2), lambda x: sympy.exp(-x**2), 3, lambda x, y_th: ((), torch.exp(-x**2))),
                  #'cosh': (lambda x: torch.cosh(x), lambda x: sympy.cosh(x), 5),
-                 'sigmoid': (lambda x: torch.sigmoid(x), sympy.Function('sigmoid'), 4),
+                 #'sigmoid': (lambda x: torch.sigmoid(x), sympy.Function('sigmoid'), 4),
                  #'relu': (lambda x: torch.relu(x), relu),
 }
 

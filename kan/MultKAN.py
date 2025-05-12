@@ -1410,7 +1410,7 @@ class MultKAN(nn.Module):
         '''
         return self.parameters()
         
-    
+            
     def fit(self, dataset, opt="LBFGS", steps=100, log=1, lamb=0., lamb_l1=1., lamb_entropy=2., lamb_coef=0., lamb_coefdiff=0., update_grid=True, grid_update_num=10, loss_fn=None, lr=1.,start_grid_update_step=-1, stop_grid_update_step=50, batch=-1,
               metrics=None, save_fig=False, in_vars=None, out_vars=None, beta=3, save_fig_freq=1, img_folder='./video', singularity_avoiding=False, y_th=1000., reg_metric='edge_forward_spline_n', display_metrics=None, profile=False,model='kan'):
         '''
@@ -1678,7 +1678,7 @@ class MultKAN(nn.Module):
         # revert back to original state
         self.symbolic_enabled = old_symbolic_enabled
         return results
-    
+
     def prune_node(self, threshold=1e-2, mode="auto", active_neurons_id=None, log_history=True):
         '''
         pruning nodes
