@@ -1,7 +1,7 @@
 # HPML Project: [Optimizing Kolmogorov-Arnold Networks: Accelerating Training in KANs]
 
 ## Team Information
-- **Team Name**: [Team Name]
+- **Team Name**: [KAN GAN]
 - **Members**:
   - Abhishek Chaudhary (ac5003)
   - Neil Biju Kachappilly (nbk2122)
