@@ -28,7 +28,7 @@ Both models were implemented in PyTorch, starting from the [KindXiaoming/pykan](
 ---
 
 ## 3. Code Repository
-The implementation of our several optimizations (including mixed precision and quantization) can be found in the `kan/` directory. Several `.ipynb` files at root were used for testing and visualization. Notably, `mp_example.ipynb` contains the two-variable exponential function initially used to benchmark mixed precision KANs, and `black_scholes_mp_example.ipynb` contains all the code for our final results and visualizations in the final paper, evaluated on the 5-variable Black-Scholes Call Options Pricing Model.
+The implementation of our several optimizations (including mixed precision and quantization) can be found in the `kan/` directory. Several `.ipynb` files at root were used for testing and visualization. Notably, `mp_example.ipynb` contains the two-variable exponential function initially used to benchmark mixed precision KANs, and `black_scholes_mp_example.ipynb` contains all the code for our final results and visualizations in the final paper, evaluated on the 5-variable Black-Scholes Call Options Pricing Model. A list of notable experiments we ran to test our implementations can be found in the following notebook files.
 - `black_scholes_mp_example.ipynb`
 - `MP_Wandb.ipynb`
 - `Quantization_wandb.ipynb`
@@ -106,4 +106,4 @@ Click "Run All" in notebook.
 Our final results and visualizations can be found at the following [WandB Project](https://wandb.ai/hpml_project_spring25/Profiling_Speedups)
 
 ## 7. Notes
-- 
+- The FastKAN implementation on which we applied our optimizations was inspired by and based on the following github repo: [FastKAN](https://github.com/ZiyaoLi/fast-kan)
