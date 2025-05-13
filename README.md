@@ -16,14 +16,14 @@ Kolmogorov-Arnold Networks (KANs) offer improved interpretability and accuracy c
 
 ## 2. Model Description
 We work with two variants of Kolmogorov-Arnold Networks:
-	•	Vanilla KAN: Uses B-spline activation functions on edges.
-	•	FastKAN: An architecture that replaces splines with Gaussian radial basis functions (RBFs) to simplify evaluation and improve parallelizability.
+- Vanilla KAN: Uses B-spline activation functions on edges.
+- FastKAN: An architecture that replaces splines with Gaussian radial basis functions (RBFs) to simplify evaluation and improve parallelizability.
 
 Both models were implemented in PyTorch, starting from the [KindXiaoming/pykan]([https://github.com/user/repo/blob/branch/other_file.md](https://github.com/KindXiaoming/pykan) repository. We modified the codebase to support:
-	•	Mixed precision training using torch.cuda.amp
-	•	Torch compilation via torch.compile() with Triton/CUDA graph support and TorchInductor
-	•	Quantization-aware training (QAT) for FastKAN using x86.qconfig
-	•	Custom Black-Scholes dataset generation for benchmarking
+- Mixed precision training using torch.cuda.amp
+- Torch compilation via torch.compile() with Triton/CUDA graph support and TorchInductor
+- Quantization-aware training (QAT) for FastKAN using x86.qconfig
+- Custom Black-Scholes dataset generation for benchmarking
  
 ---
 
