@@ -166,4 +166,4 @@ Our final results and visualizations can be found at the following [WandB Projec
 - The FastKAN implementation on which we applied our optimizations was inspired by and based on the following github repo: [FastKAN](https://github.com/ZiyaoLi/fast-kan)
 - Model Architecture files are located in `kan/`
 - Traces are saved in `traces/`
-- Data for visualizations were exported from WanB and moved into `data/`
+- Data for visualizations were exported from WandB and moved into `data/`
