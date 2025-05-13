@@ -41,18 +41,67 @@ The implementation of our several optimizations (including mixed precision and q
 
 ## 4. Final Results Summary
 
-Example Table: 
+| Model                                   | Relative CUDA Speed Up (Vanilla KAN / Model) |
+|----------------------------------------|----------------------------------------------|
+| QuantFastKAN Compiled w/ Options       | 6.27                                         |
+| QuantFastKAN Compiled                  | 6.08                                         |
+| QuantFastKAN                           | 6.10                                         |
+| FastMPKAN Compiled w/ Options          | 7.68                                         |
+| FastMPKAN Compiled                     | 7.68                                         |
+| FastMPKAN                              | 7.68                                         |
+| FastKAN Compiled w/ Options            | 8.01                                         |
+| FastKAN Compiled                       | 7.72                                         |
+| FastKAN                                | 7.83                                         |
+| Mixed Precision KAN Compiled w/ Options| 1.29                                         |
+| Mixed Precision KAN Compiled           | 1.29                                         |
+| Mixed Precision KAN                    | 1.23                                         |
+| Vanilla KAN Compiled w/ Options        | 1.05                                         |
+| Vanilla KAN Compiled                   | 1.06                                         |
+| **Vanilla KAN**                        | **1.00**                                     |
 
-| Metric               | Value       |
-|----------------------|-------------|
-| Final Top-1 Accuracy | XX.XX%      |
-| Inference Latency    | XX.XX ms    |
-| Model Size           | XX MB       |
-| Peak Memory Use      | XX MB       |
-| Training Time/Epoch  | XX s        |
-| Device               | NVIDIA T4 (GCP VM) |
 
+
+| Model                         | Ratio to Vanilla KAN (×) |
+|-----------------------------------------|---------------------------|
+| QuantFastKAN Compiled w/ Options        | 49.93                     |
+| QuantFastKAN Compiled                   | 14.20                     |
+| QuantFastKAN                            | 31.71                     |
+| FastMPKAN Compiled w/ Options           | 31.84                     |
+| FastMPKAN Compiled                      | 42.53                     |
+| FastMPKAN                               | 45.17                     |
+| FastKAN Compiled w/ Options             | 4.67                      |
+| FastKAN Compiled                        | 12.31                     |
+| FastKAN                                 | 48.08                     |
+| Mixed Precision KAN Compiled w/ Options | 7.00                      |
+| Mixed Precision KAN Compiled            | 8.07                      |
+| Mixed Precision KAN                     | 1.03                      |
+| Vanilla KAN Compiled w/ Options         | 4.18                      |
+| Vanilla KAN Compiled                    | 3.50                      |
+| **Vanilla KAN**                         | **1.00**                  |
+| **Input Size**                          | **10,000**                |
+| **Device**               | **NVIDIA T4 (GCP VM)**       |
 ---
+
+| Model                                   | Validation Loss Improvement (Vanilla KAN / Model) |
+|----------------------------------------|----------------------------------------------------|
+| QuantFastKAN Compiled w/ Options       | 1.10                                               |
+| QuantFastKAN Compiled                  | 1.23                                               |
+| QuantFastKAN                           | 1.18                                               |
+| FastMPKAN Compiled w/ Options          | 1.18                                               |
+| FastMPKAN Compiled                     | 1.17                                               |
+| FastMPKAN                              | 1.20                                               |
+| FastKAN Compiled w/ Options            | 1.15                                               |
+| FastKAN Compiled                       | 1.05                                               |
+| FastKAN                                | 1.16                                               |
+| Mixed Precision KAN Compiled w/ Options| 1.06                                               |
+| Mixed Precision KAN Compiled           | 1.07                                               |
+| Mixed Precision KAN                    | 1.01                                               |
+| Vanilla KAN Compiled w/ Options        | 1.06                                               |
+| Vanilla KAN Compiled                   | 1.07                                               |
+| **Vanilla KAN**                        | **1.00**                                           |
+| **Input Size**                          | **10,000**                |
+| **Device**               | **NVIDIA T4 (GCP VM)**       |
+
 
 ## 5. Reproducibility Instructions
 
@@ -70,17 +119,23 @@ pip install -r requirements.txt
 In order to visualize our results, make sure you have an authenticated WandB account before you run the code. In order to run in offline mode, run the following in shell.
 ```bash
 export WANDB_MODE=offline
-python train.py
 ```
-
----
+Then follow the E. Quickstart
 
 ### C. Training & Evaluation
+
+To train the analogous MLP to KAN, navigate to 
+`WandB.ipynb`:
+```bash
+Click "Run All" in notebook.
+```
 
 To train evaluate the various KAN models, navigate to `black_scholes_mp_example.ipynb`:
 ```bash
 Click "Run All" in notebook.
 ```
+Should you want to modify the parameters across the models change
+`WandB Specific`, `Dataset Specific`, `Model Specific`, `Training Specific` parameters before initialization 
 
 ---
 
@@ -94,6 +149,8 @@ pip install -r requirements.txt
 
 # Step 2: Locate source file
 cd black_scholes_mp_example.ipynb
+
+# Step 3: Verify you are using a GPU VM
 
 # Step 4: Run training
 Click "Run All" in notebook.
