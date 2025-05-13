@@ -16,18 +16,30 @@ Kolmogorov-Arnold Networks (KANs) offer improved interpretability and accuracy c
 
 ## 2. Model Description
 We work with two variants of Kolmogorov-Arnold Networks:
-	•	Vanilla KAN: Uses B-spline activation functions on edges.
-	•	FastKAN: An architecture that replaces splines with Gaussian radial basis functions (RBFs) to simplify evaluation and improve parallelizability.
+- Vanilla KAN: Uses B-spline activation functions on edges.
+- FastKAN: An architecture that replaces splines with Gaussian radial basis functions (RBFs) to simplify evaluation and improve parallelizability.
 
 Both models were implemented in PyTorch, starting from the [KindXiaoming/pykan]([https://github.com/user/repo/blob/branch/other_file.md](https://github.com/KindXiaoming/pykan) repository. We modified the codebase to support:
-	•	Mixed precision training using torch.cuda.amp
-	•	Torch compilation via torch.compile() with Triton/CUDA graph support and TorchInductor
-	•	Quantization-aware training (QAT) for FastKAN using x86.qconfig
-	•	Custom Black-Scholes dataset generation for benchmarking
+- Mixed precision training using torch.cuda.amp
+- Torch compilation via torch.compile() with Triton/CUDA graph support and TorchInductor
+- Quantization-aware training (QAT) for FastKAN using x86.qconfig
+- Custom Black-Scholes dataset generation for benchmarking
  
 ---
 
-## 3. Final Results Summary
+## 3. Code Repository
+The implementation of our several optimizations (including mixed precision and quantization) can be found in the `kan/` directory. Several `.ipynb` files at root were used for testing and visualization. Notably, `mp_example.ipynb` contains the two-variable exponential function initially used to benchmark mixed precision KANs, and `black_scholes_mp_example.ipynb` contains all the code for our final results and visualizations in the final paper, evaluated on the 5-variable Black-Scholes Call Options Pricing Model. A list of notable experiments we ran to test our implementations can be found in the following notebook files.
+- `black_scholes_mp_example.ipynb`
+- `MP_Wandb.ipynb`
+- `Quantization_wandb.ipynb`
+- `WandB.ipynb`
+- `mp_example.ipynb`
+- `plotting.ipynb`
+- `quantization.ipynb`
+
+---
+
+## 4. Final Results Summary
 
 | Model                                   | Relative CUDA Speed Up (Vanilla KAN / Model) |
 |----------------------------------------|----------------------------------------------|
@@ -91,7 +103,7 @@ Both models were implemented in PyTorch, starting from the [KindXiaoming/pykan](
 | **Device**               | **NVIDIA T4 (GCP VM)**       |
 
 
-## 4. Reproducibility Instructions
+## 5. Reproducibility Instructions
 
 ### A. Requirements
 
@@ -147,5 +159,8 @@ Click "Run All" in notebook.
 
 ---
 
-## 5. Notes
-- 
+## 6. WandB Project
+Our final results and visualizations can be found at the following [WandB Project](https://wandb.ai/hpml_project_spring25/Profiling_Speedups)
+
+## 7. Notes
+- The FastKAN implementation on which we applied our optimizations was inspired by and based on the following github repo: [FastKAN](https://github.com/ZiyaoLi/fast-kan)
