@@ -1,5 +1,7 @@
 # HPML Project: [Optimizing Kolmogorov-Arnold Networks: Accelerating Training in KANs]
 
+Full paper available in Optimized_Kan_Report.pdf.
+
 ## Team Information
 - **Team Name**: [KAN GAN]
 - **Members**:
